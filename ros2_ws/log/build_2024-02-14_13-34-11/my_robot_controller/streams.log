@@ -1,0 +1,19 @@
+[0.470s] Invoking command in '/home/juan/ros2_ws/build/my_robot_controller': PYTHONPATH=/home/juan/ros2_ws/build/my_robot_controller/prefix_override:/home/juan/ros2_ws/install/my_robot_controller/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --editable --build-directory /home/juan/ros2_ws/build/my_robot_controller/build --no-deps install_data
+[0.637s] running develop
+[0.730s] running egg_info
+[0.730s] writing my_robot_controller.egg-info/PKG-INFO
+[0.730s] writing dependency_links to my_robot_controller.egg-info/dependency_links.txt
+[0.730s] writing entry points to my_robot_controller.egg-info/entry_points.txt
+[0.730s] writing requirements to my_robot_controller.egg-info/requires.txt
+[0.730s] writing top-level names to my_robot_controller.egg-info/top_level.txt
+[0.731s] reading manifest file 'my_robot_controller.egg-info/SOURCES.txt'
+[0.732s] writing manifest file 'my_robot_controller.egg-info/SOURCES.txt'
+[0.733s] running build_ext
+[0.733s] Creating /home/juan/ros2_ws/install/my_robot_controller/lib/python3.10/site-packages/my-robot-controller.egg-link (link to .)
+[0.733s] Installing 1_turtle_bot_teleop script to /home/juan/ros2_ws/install/my_robot_controller/lib/my_robot_controller
+[0.733s] Installing 2_turtle_bot_interface script to /home/juan/ros2_ws/install/my_robot_controller/lib/my_robot_controller
+[0.733s] Installing 3_turtle_bot_player script to /home/juan/ros2_ws/install/my_robot_controller/lib/my_robot_controller
+[0.733s] 
+[0.734s] Installed /home/juan/ros2_ws/build/my_robot_controller
+[0.734s] running install_data
+[0.752s] Invoked command in '/home/juan/ros2_ws/build/my_robot_controller' returned '0': PYTHONPATH=/home/juan/ros2_ws/build/my_robot_controller/prefix_override:/home/juan/ros2_ws/install/my_robot_controller/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --editable --build-directory /home/juan/ros2_ws/build/my_robot_controller/build --no-deps install_data

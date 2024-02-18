@@ -1,0 +1,5 @@
+[console_scripts]
+1_turtle_bot_teleop = my_robot_controller.turtle_bot_teleop:main
+2_turtle_bot_interface = my_robot_controller.turtle_bot_interface:main
+3_turtle_bot_player = my_robot_controller.turtle_bot_player:main
+
