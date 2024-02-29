@@ -14,11 +14,11 @@ class turtleBotInterface(Node):
 
     def __init__(self):
         super().__init__("turtle_interface")
-        open("./moves.json", "w")
         ask = messagebox.askyesno(title="TurtleBotSim", message="Do you want to record")
         self.pos = {'x': [], 'y': []}
         self.turtle_position_ = self.create_subscription(Twist, "/turtlebot_position", self.position_callback, 1)
         if ask:
+            open("./moves.json", "w")
             print("Recording in progress")
             self.turtle_moves_ = self.create_subscription(Twist, "/turtlebot_cmdVel",self.save_movement ,1) 
     
