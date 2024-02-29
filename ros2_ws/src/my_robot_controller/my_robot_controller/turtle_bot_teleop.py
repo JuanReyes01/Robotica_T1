@@ -1,33 +1,33 @@
-#!/usr/bin/env python3
-
 import rclpy
 from rclpy.node import Node
 from curtsies import Input
-import queue
 from geometry_msgs.msg import Twist
 import threading
-
+import time
 
 class turtleBotTeleop(Node):
     
     def __init__(self):
         """
-            Atribute declaration
+        Attribute declaration
         """
-        # set timeout counter to 1
-        self.timeo = 1
-        # set vel counter to 0.0
-        self.vel =  0.0
-        # gather linear and angular vel from user
+        # Set timeout counter to 1
+        self.timeout = 1
+        # Set velocity counter to 0.0
+        self.vel = 0.0
+        # Gather linear and angular velocity from user
         self.linear, self.angular = self.read_values()
-        # key press queue (not useful now, maybe later)
-        self.key_queue = queue.Queue()
+        # Store the last key pressed
+        self.last_key_pressed = None
+        # Initialize a timer
+        self.last_key_time = time.time()
+
         """
-            Construction of the object
+        Construction of the object
         """
-        # initializing the Node
+        # Initializing the Node
         super().__init__("Turtle_bot_teleop")
-        # log into console that the node has been initialized
+        # Log into console that the node has been initialized
         self.get_logger().info("Key Selected Node Begin")
         print("""
         Use:
@@ -35,19 +35,16 @@ class turtleBotTeleop(Node):
             asd
         To control the robot
               """)
-        # create the publisher
+        # Create the publisher
         self.cmd_vel_pub_ = self.create_publisher(Twist, "/turtlebot_cmdVel",  1)
-        # create a thread to manage key reading/ TODO: thread must be stoped when program exits
+        # Create a thread to manage key reading
         self.read_keys_thread = threading.Thread(target=self.read_keys)
-        #self.read_keys_thread.daemon(True)
         self.read_keys_thread.start()
-        # start a async callout for getkey method 
-        self._timer = self.create_timer(0.1, self.getKey)
-            
-        
+        # Continuously execute the action associated with the last key pressed
+        self.execute_last_action()
 
     """
-    Method that recieves the values for linear and angular velocity at the start of the program
+    Method that receives the values for linear and angular velocity at the start of the program
     """
     def read_values(self):
         while True:
@@ -66,45 +63,41 @@ class turtleBotTeleop(Node):
     def read_keys(self):
         with Input(keynames='curses') as input_generator:
             for e in input_generator:
-                self.key_queue.put(e)
+                if e is None:
+                    self.last_key_pressed = None
+                else:
+                    print(e)
+                    # Update the last key pressed
+                    self.last_key_pressed = e
+                    # Update the time when a key was last pressed
+                    self.last_key_time = time.time()
 
     """
-    Method that reacts to the read keys
+    Method that executes the action associated with the last key pressed
     """
-    def getKey(self):
+    def execute_last_action(self):
         msg = Twist()
-        try:
-            e = self.key_queue.get_nowait()
-            if e.__class__.__name__ == 'str':
-                self.timeo = self.timeo+1
-                print("key pressed: "+str(e))
-                if e == 'w':
+        while True:
+            current_time = time.time()
+            # Check if it has been more than the timeout value since the last key press
+            if current_time - self.last_key_time > self.timeout:
+                self.last_key_pressed = None  # Reset last_key_pressed to None
+            if self.last_key_pressed:
+                if self.last_key_pressed == 'w':
                     self.vel =  self.linear
                     msg.linear.x =  self.linear
-                    self.cmd_vel_pub_.publish(msg)
-                elif e == 'd':
+                elif self.last_key_pressed == 'd':
                     msg.angular.z = -self.angular
-                    msg.linear.x = self.vel
-                    self.cmd_vel_pub_.publish(msg)
-                elif e == 's':
+                elif self.last_key_pressed == 's':
                     self.vel = -self.linear
                     msg.linear.x = -self.linear
-                    self.cmd_vel_pub_.publish(msg)
-                elif e == 'a':
-                    msg.linear.x = self.vel
+                elif self.last_key_pressed == 'a':
                     msg.angular.z =  self.angular
-                    self.cmd_vel_pub_.publish(msg)
-            self.key_queue = queue.Queue()
-
-        except queue.Empty:
-           if self.timeo>0:
-                self.vel = 0.0
-                msg.linear.x =  0.0
-                msg.angular.z =  0.0
-                self.cmd_vel_pub_.publish(msg)
-                self.timeo = 0
-           else:
-               self.timeo = self.timeo+1
+            else:
+                msg.linear.x = 0.0
+                msg.angular.z = 0.0
+            self.cmd_vel_pub_.publish(msg)
+            time.sleep(0.1)  # wait for 0.1 seconds
 
 def main(args=None):
     rclpy.init(args=args)
