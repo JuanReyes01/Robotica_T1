@@ -8,6 +8,7 @@ from matplotlib.animation import FuncAnimation
 import threading 
 import json
 from tkinter import messagebox
+import time
 
 class turtleBotInterface(Node):
     
@@ -18,13 +19,13 @@ class turtleBotInterface(Node):
         self.pos = {'x': [], 'y': []}
         self.turtle_position_ = self.create_subscription(Twist, "/turtlebot_position", self.position_callback, 1)
         if ask:
-            self.name = input("Save to file: ")
+            open("./moves.json", "w")
             print("Recording in progress")
             self.turtle_moves_ = self.create_subscription(Twist, "/turtlebot_cmdVel",self.save_movement ,1) 
     
     def save_movement(self, msg: Twist):
         try:
-            with open('./'+self.name+'.json', 'r') as file:
+            with open('./moves.json', 'r') as file:
                 self.data = json.load(file)
         except FileNotFoundError:
             print("File 'moves.json' not found.")
@@ -48,10 +49,10 @@ class turtleBotInterface(Node):
         })
 
         # Write the updated data back to the file
-        with open('./'+self.name+'.json', 'w') as file:
+        with open('./moves.json', 'w') as file:
             json.dump(self.data, file)
 
-        print("Movement data saved successfully.")
+        print("Movement data saved successfully" + str(time))
 
 
         """
@@ -104,7 +105,9 @@ class turtleBotInterface(Node):
             
         
         #print(self.pos)
-
+    def on_shutdown(self):
+        with open("./moves.txt", "w") as file:
+            file.write(self.content)
 
 def main(args=None):
     rclpy.init(args=args)

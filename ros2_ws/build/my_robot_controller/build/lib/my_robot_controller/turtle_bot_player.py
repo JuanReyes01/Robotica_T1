@@ -11,19 +11,18 @@ class turtleBotPlayer(Node):
         super().__init__("turtle_bot_player")
         self.cmd_vel_pub_ = self.create_publisher(Twist, "/turtlebot_cmdVel",  1)
         try:
-            self.name = input("Save to file: ")
-            with open('./'+self.name+'.json', 'r') as file:
+            with open('./moves.json', 'r') as file:
                 self.data = json.load(file)
                 print("Data loaded succesfully")
         except FileNotFoundError:
-            print("File "+self.name+" not found.")
+            print("File 'moves.json' not found.")
             self.data = []
         except json.decoder.JSONDecodeError:
             print("Error decoding JSON data.")
             self.data = []
         self.i = 0
         self.j = len(self.data)
-        self._timer = self.create_timer(0.05, self.play_move)
+        self._timer = self.create_timer(0.1, self.play_move)
                 
     def play_move(self):
         msg = Twist()
